@@ -1,106 +1,85 @@
 var colorSquaresAmount = 6;
-var colors = generateColorsArray(colorSquaresAmount);
-var winningColor = drawWinningColor();
+var colors = [];
+var winningColor;
 var gameOver = false;
 
 var codeDisplay = document.querySelector("#colorCode");
-codeDisplay.textContent = winningColor;
-
 var topRibbon = document.querySelector("h1");
 var colorSquares = document.querySelectorAll("td");
 var hasWinningColorBackground = document.querySelectorAll(".winningColor");
-var easyBtn = document.querySelector("#easyBtn");
-var hardBtn = document.querySelector("#hardBtn");
+var modeButtons = document.querySelectorAll(".mode");
 var notify = document.querySelector("#notify");
 var resetBtn = document.querySelector("#resetBtn");
 
-for(var i = 0; i < colorSquares.length; i++) {
-	colorSquares[i].style.backgroundColor = colors[i];
-	colorSquaresListener();
+init();
+
+function init() {
+	setupModeButtons();
+	setupSquares();
+	reset();
 }
 
-function colorSquaresListener() {
-	colorSquares[i].addEventListener("click", function() {
-		if(!gameOver) {
-			if(this.style.backgroundColor === winningColor){
-				notify.textContent = "Correct!";
-				gameOver = true;
-				resetBtn.textContent = "PLAY AGAIN?";
-				for(i = 0; i <= colorSquaresAmount; i++) {
-					hasWinningColorBackground[i].style.backgroundColor = winningColor;
+function setupModeButtons() {
+	for(var i = 0; i < modeButtons.length; i++) {
+		modeButtons[i].addEventListener("click", function() {
+			modeButtons[0].classList.remove("selected");
+			modeButtons[1].classList.remove("selected");
+			this.classList.add("selected");
+			this.textContent === "EASY" ? colorSquaresAmount = 3: colorSquaresAmount = 6;
+			reset();
+		})
+	}
+}
+
+function setupSquares() {
+	for(var i = 0; i < colorSquares.length; i++) {
+		colorSquares[i].addEventListener("click", function() {
+			if(!gameOver) {
+				if(this.style.backgroundColor === winningColor){
+					notify.textContent = "Correct!";
+					gameOver = true;
+					resetBtn.textContent = "PLAY AGAIN?";
+					for(i = 0; i <= colorSquaresAmount; i++) {
+						hasWinningColorBackground[i].style.backgroundColor = winningColor;
+					}
+
+				} else {
+					this.style.backgroundColor = "rgb(25, 25, 25)";
+					notify.textContent = "Try again";
 				}
-
-			} else {
-				this.style.backgroundColor = "rgb(25, 25, 25)";
-				notify.textContent = "Try again";
 			}
-		}
-	})
+		})
+	}
 }
 
-easyBtn.addEventListener("click", function() {
-	easyBtn.classList.add("selected");
-	hardBtn.classList.remove("selected");
-
-	colorSquaresAmount = 3;
+function reset() {
 	colors = generateColorsArray(colorSquaresAmount);
 	winningColor = drawWinningColor();
 	codeDisplay.textContent = winningColor;
 	topRibbon.style.backgroundColor = "steelblue";
+	gameOver = false;
+	notify.textContent = "";
+	resetBtn.textContent = "NEW COLORS";
 
 	for(var i = 0; i < colorSquares.length; i++) {
 		if(colors[i]) {
+			colorSquares[i].style.display = "table-cell";
 			colorSquares[i].style.backgroundColor = colors[i];
 		} else {
 			colorSquares[i].style.display = "none";
 		}
 	}
-
-	gameOver = false;
-	notify.textContent = "";
-
-})
-
-hardBtn.addEventListener("click", function() {
-	easyBtn.classList.remove("selected");
-	hardBtn.classList.add("selected");
-
-	colorSquaresAmount = 6;
-	colors = generateColorsArray(colorSquaresAmount);
-	winningColor = drawWinningColor();
-	codeDisplay.textContent = winningColor;
-	topRibbon.style.backgroundColor = "steelblue";
-
-	for(var i = 0; i < colorSquares.length; i++) {
-		colorSquares[i].style.display = "table-cell";
-		colorSquares[i].style.backgroundColor = colors[i];
-	}
-
-	gameOver = false;
-	notify.textContent = "";
-})
+}
 
 resetBtn.addEventListener("click", function() {
-	colors = generateColorsArray(colorSquaresAmount);
-	winningColor = drawWinningColor();
-	codeDisplay.textContent = winningColor;
-	topRibbon.style.backgroundColor = "steelblue";
-
-	for(var i = 0; i < colorSquares.length; i++) {
-		colorSquares[i].style.backgroundColor = colors[i];
-	}
-
-	gameOver = false;
-	notify.textContent = "";
-	resetBtn.textContent = "NEW COLORS";
+	reset();
 })
 
 function createRandomColor() {
-	var red = Math.floor(Math.random() * 256);
-	var green = Math.floor(Math.random() * 256);
-	var blue = Math.floor(Math.random() * 256);
-	var color = "rgb(" + red + ", " + green + ", " + blue + ")";
-	return color;
+	var r = Math.floor(Math.random() * 256);
+	var g = Math.floor(Math.random() * 256);
+	var b = Math.floor(Math.random() * 256);
+	return "rgb(" + r + ", " + g + ", " + b + ")";
 }
 
 function generateColorsArray(num) {
